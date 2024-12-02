@@ -2,10 +2,16 @@
 
 # 🎄 Advent of Code!
 
-Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org/).
+Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org/). Using [this template](https://github.com/fspoettel/advent-of-code-rust).
 
 <!--- advent_readme_stars table --->
-## 2023 Results
+
+<!--- advent_readme_stars table --->
+
+<!--- benchmarking table --->
+
+
+## 2023 Results (not-yet-migrated solutions [here](https://github.com/samuelbgolden/aoc2023))
 
 | Day | Part 1 | Part 2 |
 | :---: | :---: | :---: |
@@ -24,6 +30,3 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 | [Day 13](https://adventofcode.com/2023/day/13) | ⭐ | ⭐ |
 | [Day 14](https://adventofcode.com/2023/day/14) | ⭐ | ⭐ |
 | [Day 15](https://adventofcode.com/2023/day/15) | ⭐ | ⭐ |
-<!--- advent_readme_stars table --->
-
-<!--- benchmarking table --->
