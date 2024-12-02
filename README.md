@@ -14,6 +14,15 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 <!--- advent_readme_stars table --->
 
 <!--- benchmarking table --->
+## Benchmarks
+
+| Day | Part 1 | Part 2 |
+| :---: | :---: | :---:  |
+| [Day 1](./src/bin/01.rs) | `72.1µs` | `74.3µs` |
+| [Day 2](./src/bin/02.rs) | `81.3µs` | `117.0µs` |
+
+**Total: 0.34ms**
+<!--- benchmarking table --->
 
 
 ## 2023 Results (not-yet-migrated solutions [here](https://github.com/samuelbgolden/aoc2023))
