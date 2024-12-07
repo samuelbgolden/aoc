@@ -1,6 +1,7 @@
 advent_of_code::solution!(7);
 
 use itertools::{repeat_n, Itertools};
+use rayon::prelude::*;
 
 type Int = u64;
 
@@ -30,9 +31,12 @@ impl Calibration {
         }
     }
 
-    fn test_operators_produce_target<F: Fn(Int, Int) -> Int>(&self, operators: &[F]) -> bool {
+    fn test_operators_produce_target<F: Fn(Int, Int) -> Int + Send + Sync>(
+        &self,
+        operators: &[F],
+    ) -> bool {
         let placements = self.operands.len() - 1;
-        repeat_n(operators.iter(), placements)
+        repeat_n(operators, placements)
             .multi_cartesian_product()
             .any(|ops| {
                 // start with first operand
@@ -53,7 +57,7 @@ impl Calibration {
 pub fn part_one(input: &str) -> Option<Int> {
     let ops = vec![|x, y| x + y, |x, y| x * y];
     let result: Int = input
-        .split('\n')
+        .par_lines()
         .filter(|s| !s.is_empty())
         .map(Calibration::from_str)
         .filter_map(|c| match c.test_operators_produce_target(&ops) {
@@ -65,9 +69,11 @@ pub fn part_one(input: &str) -> Option<Int> {
 }
 
 pub fn part_two(input: &str) -> Option<Int> {
-    let ops = vec![|x, y| x + y, |x, y| x * y, |x: Int, y: Int| (x * 10u64.pow(y.ilog10() + 1)) + y];
+    let ops = vec![|x, y| x + y, |x, y| x * y, |x: Int, y: Int| {
+        (x * 10u64.pow(y.ilog10() + 1)) + y
+    }];
     let result: Int = input
-        .split('\n')
+        .par_lines()
         .filter(|s| !s.is_empty())
         .map(Calibration::from_str)
         .filter_map(|c| match c.test_operators_produce_target(&ops) {
