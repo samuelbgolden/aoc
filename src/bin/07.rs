@@ -65,13 +65,7 @@ pub fn part_one(input: &str) -> Option<Int> {
 }
 
 pub fn part_two(input: &str) -> Option<Int> {
-    let ops = vec![|x, y| x + y, |x, y| x * y, |x: Int, y: Int| {
-        let mut concatenated = x.to_string();
-        concatenated.push_str(&y.to_string());
-        concatenated
-            .parse::<Int>()
-            .unwrap_or_else(|_| panic!("couldn't concatenate '{}' and '{}'", x, y))
-    }];
+    let ops = vec![|x, y| x + y, |x, y| x * y, |x: Int, y: Int| (x * 10u64.pow(y.ilog10() + 1)) + y];
     let result: Int = input
         .split('\n')
         .filter(|s| !s.is_empty())
