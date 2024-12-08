@@ -1,6 +1,8 @@
+use rayon::iter::ParallelIterator;
 use std::{collections::HashSet, fmt::Display, hash::BuildHasherDefault, ops::Add};
 
 use fxhash::FxHasher;
+use rayon::iter::IntoParallelRefIterator;
 
 advent_of_code::solution!(6);
 
@@ -24,7 +26,7 @@ impl Add for Pos {
 type Dir = Pos;
 type Hasher = FxHasher;
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 enum Tile {
     Empty,
     Wall,
@@ -36,6 +38,7 @@ enum WalkState {
     Looping,
 }
 
+#[derive(Clone, Debug)]
 struct PatrolMap {
     map: Vec<Vec<Tile>>,
     guard_pos: Pos,
@@ -138,15 +141,6 @@ impl PatrolMap {
         }
     }
 
-    fn count_visited_on_patrol(&mut self, print: bool) -> u32 {
-        let _ = self.is_patrol_loop(print);
-        self.visited
-            .iter()
-            .map(|(pos, _)| *pos)
-            .collect::<HashSet<Pos>>()
-            .len() as u32
-    }
-
     fn is_patrol_loop_with_obstacle(&mut self, obstacle_pos: Pos, print: bool) -> Result<bool, ()> {
         if *self.get_tile(obstacle_pos).ok_or(())? == Tile::Wall {
             return Err(());
@@ -165,23 +159,6 @@ impl PatrolMap {
             .get_mut(obstacle_pos.x as usize)
             .ok_or(())? = Tile::Empty;
         Ok(test)
-    }
-
-    fn count_new_obstacle_loops(&mut self, print: bool) -> u32 {
-        self.is_patrol_loop(print);
-        // only try for obstacle positions the patrol will actually encounter
-        self.visited
-            .clone()
-            .iter()
-            .filter_map(|(pos, dir)| {
-                let obstacle_pos = *pos + *dir;
-                match self.is_patrol_loop_with_obstacle(obstacle_pos, print) {
-                    Ok(true) => Some(obstacle_pos),
-                    _ => None,
-                }
-            })
-            .collect::<HashSet<Pos>>()
-            .len() as u32
     }
 }
 
@@ -220,12 +197,38 @@ impl Display for PatrolMap {
 
 pub fn part_one(input: &str) -> Option<u32> {
     let mut patrol = PatrolMap::from_str(input);
-    Some(patrol.count_visited_on_patrol(false))
+    let _ = patrol.is_patrol_loop(false);
+    Some(
+        patrol
+            .visited
+            .par_iter()
+            .map(|(pos, _)| *pos)
+            .collect::<HashSet<Pos>>()
+            .len() as u32,
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mut patrol = PatrolMap::from_str(input);
-    Some(patrol.count_new_obstacle_loops(false))
+    let _ = patrol.is_patrol_loop(false);
+    let candidates = patrol.visited.clone();
+    // only try for obstacle positions the patrol will actually encounter
+    Some(
+        candidates
+            .par_iter()
+            .filter_map(|(pos, dir)| {
+                let obstacle_pos = *pos + *dir;
+                match patrol
+                    .clone()
+                    .is_patrol_loop_with_obstacle(obstacle_pos, false)
+                {
+                    Ok(true) => Some(obstacle_pos),
+                    _ => None,
+                }
+            })
+            .collect::<HashSet<Pos>>()
+            .len() as u32,
+    )
 }
 
 #[cfg(test)]
