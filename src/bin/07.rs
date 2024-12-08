@@ -31,10 +31,7 @@ impl Calibration {
         }
     }
 
-    fn test_operators_produce_target<F: Fn(Int, Int) -> Int>(
-        &self,
-        operators: &[F],
-    ) -> bool {
+    fn test_operators_produce_target<F: Fn(Int, Int) -> Int>(&self, operators: &[F]) -> bool {
         let placements = self.operands.len() - 1;
         repeat_n(operators, placements)
             .multi_cartesian_product()
