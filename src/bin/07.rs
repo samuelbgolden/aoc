@@ -31,7 +31,7 @@ impl Calibration {
         }
     }
 
-    fn test_operators_produce_target<F: Fn(Int, Int) -> Int + Send + Sync>(
+    fn test_operators_produce_target<F: Fn(Int, Int) -> Int>(
         &self,
         operators: &[F],
     ) -> bool {
