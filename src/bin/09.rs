@@ -8,11 +8,17 @@ fn char_to_digit(c: char) -> usize {
 }
 
 #[allow(dead_code)]
-fn print_blocks(blocks: &Vec<Option<usize>>) {
-    println!("{}", blocks.iter().map(|block| match block {
-        Some(val) => val.to_string(),
-        None => ".".to_owned(),
-    }).join(""));
+fn print_blocks(blocks: &[Option<usize>]) {
+    println!(
+        "{}",
+        blocks
+            .iter()
+            .map(|block| match block {
+                Some(val) => val.to_string(),
+                None => ".".to_owned(),
+            })
+            .join("")
+    );
 }
 
 type FileId = usize;
@@ -54,10 +60,7 @@ pub fn part_one(input: &str) -> Option<u64> {
         blocks
             .iter()
             .enumerate()
-            .filter_map(|(i, b)| match b {
-                Some(int) => Some((i * *int) as u64),
-                None => None,
-            })
+            .filter_map(|(i, b)| b.as_ref().map(|int| (i * *int) as u64))
             .sum::<u64>(),
     )
 }
@@ -93,33 +96,40 @@ pub fn part_two(input: &str) -> Option<u64> {
             match blocks.get(inner_iter) {
                 Some(Some(_)) => (), // do nothing if there's a file there
                 None => break,       // we've reached the end of the blocks, go to next file
-                Some(None) => { // free space!
+                Some(None) => {
+                    // free space!
                     inner_lookahead = inner_iter;
                     // starting from this free space, move forward and check if there are enough
                     // free spaces to fit the current file
                     loop {
                         match blocks.get(inner_lookahead) {
-                            Some(None) => { // still free space
+                            Some(None) => {
+                                // still free space
                                 // swap if we have looked far enough ahead to fit the file
                                 if (inner_lookahead - inner_iter) == (size - 1) {
-                                    (inner_iter..=inner_lookahead).zip(idx..(idx+size)).for_each(|(free_idx, file_idx)| blocks.swap(free_idx, file_idx));
+                                    (inner_iter..=inner_lookahead)
+                                        .zip(idx..(idx + size))
+                                        .for_each(|(free_idx, file_idx)| {
+                                            blocks.swap(free_idx, file_idx)
+                                        });
                                     swapped = true;
-                                    break
+                                    break;
                                 }
-                            },
+                            }
                             None => break, // end of blocks, leave
-                            Some(Some(_)) => { // hit another file before finding enough space to
-                                               // fit current one, advance iterator to this point
-                                               // to avoid rechecking what we already checked
+                            Some(Some(_)) => {
+                                // hit another file before finding enough space to
+                                // fit current one, advance iterator to this point
+                                // to avoid rechecking what we already checked
                                 inner_iter = inner_lookahead;
-                                break
+                                break;
                             }
                         }
                         inner_lookahead += 1;
                     }
                     // if a swap occurred, break out of secondary loop
                     if swapped {
-                        break
+                        break;
                     }
                 }
             }
@@ -135,10 +145,7 @@ pub fn part_two(input: &str) -> Option<u64> {
         blocks
             .iter()
             .enumerate()
-            .filter_map(|(i, b)| match b {
-                Some(int) => Some((i * *int) as u64),
-                None => None,
-            })
+            .filter_map(|(i, b)| b.as_ref().map(|int| (i * *int) as u64))
             .sum::<u64>(),
     )
 }

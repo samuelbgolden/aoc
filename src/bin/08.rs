@@ -53,7 +53,7 @@ fn build_antenna_map(
     HashMap<Int, Vec<Pos>, BuildHasherDefault<FxHasher>>,
 ) {
     let height = input.lines().count() as Int;
-    let width = input.lines().nth(0).unwrap().chars().count() as Int;
+    let width = input.lines().next().unwrap().chars().count() as Int;
     let mut antenna_map: HashMap<Int, Vec<Pos>, BuildHasherDefault<FxHasher>> = HashMap::default();
     input
         .lines()

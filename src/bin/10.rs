@@ -77,10 +77,7 @@ impl TopoMap {
             .collect();
         let row_len = map.first().unwrap().len() as i32;
         assert!(map.iter().skip(1).all(|row| (row.len() as i32) == row_len));
-        Self {
-            map,
-            trailheads,
-        }
+        Self { map, trailheads }
     }
 
     fn get_altitude(&self, pos: &Pos) -> Option<&Alt> {
